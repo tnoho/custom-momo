@@ -1,6 +1,7 @@
 const remoteVideo = document.getElementById('remote_video');
 remoteVideo.controls = true;
 let peerConnection = null;
+let dataChannel = null;
 let candidates = [];
 let hasReceivedSdp = false;
 // iceServer を定義
@@ -117,6 +118,7 @@ function playVideo(element, stream) {
 
 function prepareNewConnection() {
   const peer = new RTCPeerConnection(peerConnectionConfig);
+  dataChannel = peer.createDataChannel("hid_input");
   if ('ontrack' in peer) {
     if (isSafari()) {
       let tracks = [];
@@ -164,6 +166,11 @@ function prepareNewConnection() {
         break;
     }
   };
+
+  dataChannel.onmessage = function (event) {
+    console.log("Got Data Channel Message:", event.data);
+  };
+
   peer.addTransceiver('video', {direction: 'recvonly'});
   peer.addTransceiver('audio', {direction: 'recvonly'});
 
@@ -357,6 +364,74 @@ function removeCodec(orgsdp, codec) {
   return internalFunc(orgsdp);
 }
 
-function play() {
-  remoteVideo.play();
+function sendJSON(json) {
+  console.log('sendJSON:', json);
+  if (dataChannel == null || dataChannel.readyState != "open") {
+    return;
+  }
+  dataChannel.send(JSON.stringify(json));
+}
+
+window.addEventListener("deviceorientation", function (e) {
+  let alpha = e.alpha;
+  let beta = e.beta;
+  let gamma = e.gamma;
+  document.getElementById("orientation").innerText = "alpha:" + alpha + " beta:" + beta + " gamma:" + gamma;
+}, false);
+
+function servo1() {
+  sendJSON({
+    event : "camera",
+    alpha : 30,
+    gamma : 30
+  });
+}
+
+function servo2() {
+  sendJSON({
+    event : "camera",
+    alpha : -30,
+    gamma : -30
+  });
+}
+
+function servo3() {
+  sendJSON({
+    event : "camera",
+    alpha : 0,
+    gamma : 0
+  });
+}
+
+function moterCW() {
+  sendJSON({
+    event : "arm",
+    moter1 : 1,
+    moter2 : 0,
+    moter3 : 0,
+    moter4 : 0,
+    moter5 : 0
+  });
+}
+
+function moterCCW() {
+  sendJSON({
+    event : "arm",
+    moter1 : 2,
+    moter2 : 0,
+    moter3 : 0,
+    moter4 : 0,
+    moter5 : 0
+  });
+}
+
+function moterStop() {
+  sendJSON({
+    event : "arm",
+    moter1 : 0,
+    moter2 : 0,
+    moter3 : 0,
+    moter4 : 0,
+    moter5 : 0
+  });
 }

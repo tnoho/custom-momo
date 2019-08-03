@@ -16,9 +16,16 @@
       <input type="button" onclick="connect();" value="Connect">
       <input type="button" onclick="disconnect();" value="Disconnect">
       <input type="button" onclick="play();" value="Play">
+      <input type="button" onclick="servo1();" value="Servo1">
+      <input type="button" onclick="servo2();" value="Servo2">
+      <input type="button" onclick="servo3();" value="Servo3">
+      <input type="button" onclick="moterCW();" value="MoterCW">
+      <input type="button" onclick="moterCCW();" value="MoterCCW">
+      <input type="button" onclick="moterStop();" value="MoterCCW">
     </div>
+    <span id="orientation">null</span>
     <div>
-      <video id="remote_video" autoplay style="border: 3px solid gray;"></video>
+      <video id="remote_video" autoplay playsinline style="border: 3px solid gray;"></video>
     </div>
     <script type='text/javascript' src='./webrtc.js'></script>
   </body>
