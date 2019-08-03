@@ -296,6 +296,7 @@ ifeq ($(TARGET_OS),linux)
           $(MMAL_CFLAGS) \
           -I$(VC_PATH)/include/
         LDFLAGS += \
+          -lpigpio \
           -L$(VC_PATH)/lib/ \
           -lbrcmGLESv2 \
           -lbrcmEGL \

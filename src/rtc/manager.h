@@ -5,12 +5,13 @@
 
 #include "connection.h"
 #include "connection_settings.h"
+#include "data_manager.h"
 #include "scalable_track_source.h"
 
 class RTCManager
 {
 public:
-  RTCManager(ConnectionSettings conn_settings,
+  RTCManager(ConnectionSettings conn_settings, RTCDataManager *data_mgr,
              rtc::scoped_refptr<ScalableVideoTrackSource> video_track_source);
   ~RTCManager();
   std::shared_ptr<RTCConnection> createConnection(
@@ -24,5 +25,6 @@ private:
   std::unique_ptr<rtc::Thread> _workerThread;
   std::unique_ptr<rtc::Thread> _signalingThread;
   ConnectionSettings _conn_settings;
+  RTCDataManager *_data_mgr;
 };
 #endif

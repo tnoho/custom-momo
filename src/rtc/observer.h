@@ -3,12 +3,14 @@
 
 #include "api/peer_connection_interface.h"
 
+#include "data_manager.h"
 #include "messagesender.h"
 
 class PeerConnectionObserver : public webrtc::PeerConnectionObserver
 {
 public:
-  PeerConnectionObserver(RTCMessageSender *sender) : _sender(sender) {};
+  PeerConnectionObserver(RTCMessageSender *sender, RTCDataManager *data_mgr)
+          : _sender(sender), _data_mgr(data_mgr) {};
 protected:
   void OnSignalingChange(
           webrtc::PeerConnectionInterface::SignalingState new_state) override {}
@@ -17,7 +19,7 @@ protected:
   void OnRemoveStream(
           rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override {}
   void OnDataChannel(
-          rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) override {}
+          rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) override;
   void OnRenegotiationNeeded() override {}
   void OnIceConnectionChange(
           webrtc::PeerConnectionInterface::IceConnectionState new_state) override;
@@ -28,6 +30,7 @@ protected:
 
 private:
   RTCMessageSender *_sender;
+  RTCDataManager *_data_mgr;
 };
 
 class CreateSessionDescriptionObserver : public webrtc::CreateSessionDescriptionObserver

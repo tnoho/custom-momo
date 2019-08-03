@@ -3,6 +3,15 @@
 
 #include "observer.h"
 
+void PeerConnectionObserver::OnDataChannel(
+          rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel)
+{
+  RTC_LOG(LS_INFO) << __FUNCTION__  << "  label: " << data_channel->label();
+  if (_data_mgr != nullptr)
+  {
+    _data_mgr->OnDataChannel(data_channel);
+  }
+}
 
 void PeerConnectionObserver::OnIceConnectionChange(
         webrtc::PeerConnectionInterface::IceConnectionState new_state)

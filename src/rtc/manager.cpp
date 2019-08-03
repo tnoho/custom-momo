@@ -37,9 +37,9 @@
 #include "absl/memory/memory.h"
 #endif
 
-RTCManager::RTCManager(ConnectionSettings conn_settings,
+RTCManager::RTCManager(ConnectionSettings conn_settings, RTCDataManager *data_mgr,
                        rtc::scoped_refptr<ScalableVideoTrackSource> video_track_source)
-                       : _conn_settings(conn_settings)
+                       : _conn_settings(conn_settings), _data_mgr(data_mgr)
 {
   rtc::InitializeSSL();
 
@@ -125,7 +125,7 @@ std::shared_ptr<RTCConnection> RTCManager::createConnection(
 {
   rtc_config.enable_dtls_srtp = true;
   rtc_config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
-  PeerConnectionObserver *observer = new PeerConnectionObserver(sender);
+  PeerConnectionObserver *observer = new PeerConnectionObserver(sender, _data_mgr);
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> connection = 
       _factory->CreatePeerConnection(
           rtc_config, nullptr, nullptr, observer);

@@ -27,6 +27,9 @@
 #endif
 #endif
 
+#include <pigpio.h>
+#include "rtc/robo_data_manager.h"
+
 #include "connection_settings.h"
 #include "util.h"
 #include "rtc/manager.h"
@@ -98,7 +101,12 @@ int main(int argc, char* argv[])
   }
 #endif
 
-  std::unique_ptr<RTCManager> rtc_manager(new RTCManager(cs, std::move(capturer)));
+  if (gpioInitialise() < 0)
+  {
+    std::cerr << "pigpio initialisation failed" << std::endl;
+  }
+  std::unique_ptr<RTCDataManager> robo_data_manager(new RoboDataManager());
+  std::unique_ptr<RTCManager> rtc_manager(new RTCManager(cs, robo_data_manager.get(), std::move(capturer)));
 
   {
       boost::asio::io_context ioc{1};
@@ -127,6 +135,7 @@ int main(int argc, char* argv[])
   }
 
   rtc_manager = nullptr;
+  gpioTerminate();
 
   return 0;
 }
