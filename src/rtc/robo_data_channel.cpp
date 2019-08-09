@@ -55,72 +55,48 @@ void RoboDataChannel::OnStateChange()
 
 void RoboDataChannel::OnMessage(const webrtc::DataBuffer& buffer)
 {
-  std::string recv_string(buffer.data.data<char>(), buffer.data.size());
-  json recv_message;
-  try
-  {
-      recv_message = json::parse(recv_string);
-  }
-  catch (json::parse_error &e)
-  {
-      return;
-  }
+  const uint8_t* data = buffer.data.data<uint8_t>();
+  size_t data_len = buffer.data.size();
 
-  try
-  {
-    std::string event = recv_message["event"];
-    if (absl::StartsWith(event, "camera")) {
-      CameraEvent(event, recv_message);
-    } else if (absl::StartsWith(event, "arm"))
-    {
-      ArmEvent(event, recv_message);
-    }
+  RTC_LOG(LS_INFO) << __FUNCTION__ << " data[0]:" << data[0] << " data_len:" << data_len;
+  if (data[0] == 0x01 && data_len == sizeof(float) * 2 + 1) {
+    CameraEvent(data + 1);
   }
-  catch (json::type_error &e)
+  else if (data[0] == 0x02 && data_len == 5 + 1)
   {
-    return;
+    ArmEvent(data + 1);
   }
-
 }
 
-bool RoboDataChannel::SendMessage(const std::string message) {
-  webrtc::DataBuffer data_buffer(message);
-  if (!_data_channel) {
-		return false;
-	}
-	if (_data_channel->state() == webrtc::DataChannelInterface::kOpen) {
-		return _data_channel->Send(data_buffer);
-	} else {
-		return false;
-	}
-}
-
-void RoboDataChannel::CameraEvent(std::string& event, json& recv_message)
+void RoboDataChannel::CameraEvent(const uint8_t* data)
 {
-  float alpha = recv_message["alpha"];
-  float gamma = recv_message["gamma"];
-  unsigned int alpha_width = (alpha * 500.0 / 90) + 1500;
-  unsigned int gamma_width = (gamma * 500.0 / 90) + 1500;
-  if (alpha_width < 1000) alpha_width = 1000;
-  else if (alpha_width > 2000) alpha_width = 2000;
-  if (gamma_width < 1000) gamma_width = 1000;
-  else if (gamma_width > 2000) gamma_width = 2000;
+  float alpha;
+  float gamma;
+  memcpy(&alpha, data, sizeof(float));
+  memcpy(&gamma, data + sizeof(float), sizeof(float));
+  RTC_LOG(LS_INFO) << __FUNCTION__ << " alpha:" << alpha << " gamma:" << gamma;
+  unsigned int alpha_width = (alpha * 950.0 / 90.0) + 1450.0;
+  unsigned int gamma_width = (gamma * 950.0 / 90.0) + 1450.0;
+  if (alpha_width < 500) alpha_width = 500;
+  else if (alpha_width > 2400) alpha_width = 2400;
+  if (gamma_width < 500) gamma_width = 500;
+  else if (gamma_width > 2400) gamma_width = 2400;
   RTC_LOG(LS_INFO) << __FUNCTION__ << " alpha_width:" << alpha_width << " gamma_width:" << gamma_width;
   gpioServo(12, alpha_width);
   gpioServo(13, gamma_width);
 }
 
-void RoboDataChannel::ArmEvent(std::string& event, json& recv_message)
+void RoboDataChannel::ArmEvent(const uint8_t* data)
 {
   if(_serial_fd < 0) {
     return;
   }
   unsigned char buf[] = "00000#";
-  buf[0] = (unsigned char)recv_message["moter1"] + 0x30;
-  buf[1] = (unsigned char)recv_message["moter2"] + 0x30;
-  buf[2] = (unsigned char)recv_message["moter3"] + 0x30;
-  buf[3] = (unsigned char)recv_message["moter4"] + 0x30;
-  buf[4] = (unsigned char)recv_message["moter5"] + 0x30;
+  buf[0] = data[0] + 0x30;
+  buf[1] = data[1] + 0x30;
+  buf[2] = data[2] + 0x30;
+  buf[3] = data[3] + 0x30;
+  buf[4] = data[4] + 0x30;
   RTC_LOG(LS_INFO) << __FUNCTION__ << " buf:" << buf;
   write(_serial_fd, buf, 6);
 }
