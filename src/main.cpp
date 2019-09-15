@@ -28,7 +28,7 @@
 #endif
 
 #include <pigpio.h>
-#include "rtc/robo_data_manager.h"
+#include "robot_arm/robo_data_manager.h"
 
 #include "connection_settings.h"
 #include "util.h"
