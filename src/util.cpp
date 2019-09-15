@@ -36,7 +36,7 @@ using json = nlohmann::json;
 #if USE_ROS
 
 void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
-                        bool &use_p2p, bool &use_ayame, bool &use_sora,
+                        bool &use_test, bool &use_ayame, bool &use_sora,
                         int &log_level, ConnectionSettings &cs)
 {
   ros::init(argc, argv, "momo", ros::init_options::AnonymousName);
@@ -48,7 +48,7 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
   ros::NodeHandle local_nh("~");
   local_nh.param<bool>("compressed", cs.image_compressed, cs.image_compressed);
 
-  local_nh.param<bool>("use_p2p", use_p2p, use_p2p);
+  local_nh.param<bool>("use_test", use_test, use_test);
   local_nh.param<bool>("use_ayame", use_ayame, use_ayame);
   local_nh.param<bool>("use_sora", use_sora, use_sora);
 
@@ -70,12 +70,26 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
   local_nh.param<int>("port", cs.port, cs.port);
   local_nh.param<int>("log_level", log_level, log_level);
 
+  // オーディオフラグ
+  local_nh.param<bool>("disable_echo_cancellation",
+                       cs.disable_echo_cancellation,
+                       cs.disable_echo_cancellation);
+  local_nh.param<bool>("disable_auto_gain_control",
+                       cs.disable_auto_gain_control,
+                       cs.disable_auto_gain_control);
+  local_nh.param<bool>("disable_noise_suppression",
+                       cs.disable_noise_suppression,
+                       cs.disable_noise_suppression);
+  local_nh.param<bool>("disable_highpass_filter", cs.disable_highpass_filter,
+                       cs.disable_highpass_filter);
+  local_nh.param<bool>("disable_typing_detection", cs.disable_typing_detection,
+                       cs.disable_typing_detection);
+
   if (use_sora && local_nh.hasParam("SIGNALING_URL") && local_nh.hasParam("CHANNEL_ID")) {
     local_nh.getParam("SIGNALING_URL", cs.sora_signaling_host);
     local_nh.getParam("CHANNEL_ID", cs.sora_channel_id);
     local_nh.param<bool>("auto", cs.sora_auto_connect, cs.sora_auto_connect);
 
-    // 隠しオプション
     std::string sora_metadata;
     local_nh.param<std::string>("metadata", sora_metadata, "");
 
@@ -84,8 +98,8 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
     {
       cs.sora_metadata = json::parse(sora_metadata);
     }
-  } else if (use_p2p) {
-    local_nh.param<std::string>("document_root", cs.p2p_document_root, get_current_dir_name());
+  } else if (use_test) {
+    local_nh.param<std::string>("document_root", cs.test_document_root, get_current_dir_name());
   } else if (use_ayame && local_nh.hasParam("SIGNALING_URL") && local_nh.hasParam("ROOM_ID")) {
     local_nh.getParam("SIGNALING_URL", cs.ayame_signaling_host);
     local_nh.getParam("ROOM_ID", cs.ayame_room_id);
@@ -101,7 +115,7 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
 #else
 
 void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
-                        bool &use_p2p, bool &use_ayame, bool &use_sora,
+                        bool &use_test, bool &use_ayame, bool &use_sora,
                         int &log_level, ConnectionSettings &cs)
 {
   CLI::App app("Momo - WebRTC ネイティブクライアント");
@@ -112,7 +126,8 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
   app.add_flag("--no-audio", cs.no_audio, "オーディオを出さない");
 #if USE_MMAL_ENCODER
   app.add_flag("--force-i420", cs.force_i420, "強制的にI420にする");
-  app.add_flag("--use-native", cs.use_native, "MJPEGをハードウェアデコードする");
+  app.add_flag("--use-native", cs.use_native, "MJPEGのデコードとビデオのリサイズをハードウェアで行う");
+  app.add_option("--video-device", cs.video_device, "デバイスファイル名。省略時はどれかのビデオデバイスを自動検出")->check(CLI::ExistingFile);
 #endif
   app.add_set("--resolution", cs.resolution, {"QVGA", "VGA", "HD", "FHD", "4K"},
               "解像度");
@@ -129,12 +144,24 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
   app.add_option("--log-level", log_level, "ログレベル")
       ->transform(CLI::CheckedTransformer(log_level_map, CLI::ignore_case));
 
-  auto p2p_app = app.add_subcommand("p2p", "P2P");
+  // オーディオフラグ
+  app.add_flag("--disable-echo-cancellation", cs.disable_echo_cancellation,
+               "エコーキャンセルを無効");
+  app.add_flag("--disable-auto-gain-control", cs.disable_auto_gain_control,
+               "オートゲインコントロール無効");
+  app.add_flag("--disable-noise-suppression", cs.disable_noise_suppression,
+               "ノイズサプレッション無効");
+  app.add_flag("--disable-highpass-filter", cs.disable_highpass_filter,
+               "ハイパスフィルター無効");
+  app.add_flag("--disable-typing-detection", cs.disable_typing_detection,
+               "タイピングディテクション無効");
+
+  auto test_app = app.add_subcommand("test", "開発向け");
   auto ayame_app = app.add_subcommand("ayame", "WebRTC Signaling Server Ayame");
   auto sora_app = app.add_subcommand("sora", "WebRTC SFU Sora");
 
-  p2p_app
-      ->add_option("--document-root", cs.p2p_document_root, "配信ディレクトリ")
+  test_app
+      ->add_option("--document-root", cs.test_document_root, "配信ディレクトリ")
       ->check(CLI::ExistingDirectory);
 
   ayame_app->add_option("SIGNALING-URL", cs.ayame_signaling_host, "シグナリングホスト")->required();
@@ -164,7 +191,6 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
                    "オーディオのビットレート")
       ->check(CLI::Range(6, 510));
 
-  // 隠しオプション
   auto is_json = CLI::Validator(
       [](std::string input) -> std::string {
         try {
@@ -177,7 +203,6 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
       "JSON Value");
   std::string sora_metadata;
   sora_app->add_option("--metadata", sora_metadata, "メタデータ")
-      ->group("")
       ->check(is_json);
 
   try
@@ -194,8 +219,8 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
     cs.sora_metadata = json::parse(sora_metadata);
   }
 
-  if (cs.p2p_document_root.empty()) {
-    cs.p2p_document_root = boost::filesystem::current_path().string();
+  if (cs.test_document_root.empty()) {
+    cs.test_document_root = boost::filesystem::current_path().string();
   }
 
   if (version)
@@ -204,7 +229,7 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
     exit(0);
   }
 
-  if (!p2p_app->parsed() && !sora_app->parsed() && !ayame_app->parsed())
+  if (!test_app->parsed() && !sora_app->parsed() && !ayame_app->parsed())
   {
     std::cout << app.help() << std::endl;
     exit(1);
@@ -214,8 +239,8 @@ void Util::parseArgs(int argc, char *argv[], bool &is_daemon,
     use_sora = true;
   }
 
-  if (p2p_app->parsed()) {
-    use_p2p = true;
+  if (test_app->parsed()) {
+    use_test = true;
   }
 
   if (ayame_app->parsed()) {

@@ -21,6 +21,7 @@ struct ConnectionSettings
   bool no_audio = false;
   bool force_i420 = false;
   bool use_native = false;
+  std::string video_device = "";
   std::string video_codec = "VP8";
   std::string audio_codec = "OPUS";
   int video_bitrate = 0;
@@ -36,12 +37,18 @@ struct ConnectionSettings
   bool sora_auto_connect = false;
   nlohmann::json sora_metadata;
 
-  std::string p2p_document_root;
+  std::string test_document_root;
 
   std::string ayame_signaling_host;
   std::string ayame_room_id;
   std::string ayame_client_id;
   std::string ayame_signaling_key = "";
+
+  bool disable_echo_cancellation = false;
+  bool disable_auto_gain_control = false;
+  bool disable_noise_suppression = false;
+  bool disable_highpass_filter = false;
+  bool disable_typing_detection = false;
 
   int getWidth() {
     if (resolution == "QVGA") {
@@ -98,7 +105,7 @@ struct ConnectionSettings
     os << "sora_channel_id: " << cs.sora_channel_id << "\n";
     os << "sora_auto_connect: " << (cs.sora_auto_connect ? "true" : "false") << "\n";
     os << "sora_metadata: " << cs.sora_metadata << "\n";
-    os << "p2p_document_root: " << cs.p2p_document_root << "\n";
+    os << "test_document_root: " << cs.test_document_root << "\n";
     return os;
   }
 };

@@ -1,121 +1,42 @@
 # Momo を使ってみる
 
-## Raspberry Pi 向けのバイナリは以下にて提供しています
+## Raspberry Pi で Momo を使ってみる
 
-https://github.com/shiguredo/momo/releases にてバイナリをダウンロードしてください。
+[USE_RASPBERRY_PI.md](USE_RASPBERRY_PI.md) をお読みください。
 
-必要なライブラリをインストールしてご利用ください。
+## Mac で Momo を使ってみる
 
-### それ以外のバイナリは自前でビルドしていただく必要があります。
+[USE_MAC.md](USE_MAC.md) をお読みください。
 
-[BUILD.md](doc/BUILD.md) をお読みください。
+## WebRTC Signaling Server Ayame を使って Momo を動かしてみる
 
-## ダウンロードしたパッケージ、解凍後の構成
+時雨堂が開発しているオープンソースのシグナリングサーバ [WebRTC Signaling Server Ayame](https://github.com/OpenAyame/ayame) を利用します。
 
-```
-$ tree
-.
-├── html
-│   ├── p2p.html
-│   └── webrtc.js
-├── LICENSE
-├── momo
-└── NOTICE
-```
+[USE_AYAME.md](USE_AYAME.md) をお読みください。
 
-## Raspbian で Raspberry Pi を利用する場合
+## WebRTC SFU Sora を使って Momo を動かしてみる
 
-Raspbian にて下記を実行してください。
+時雨堂が開発、販売している商用の WebRTC SFU Sora を利用します。
 
-```
-$ sudo apt-get install libnspr4 libnss3
-```
+この機能を利用する場合は事前に Sora のライセンスを購入する必要がありますので、ご注意ください。
 
-## Raspbian で Raspberry Pi の Raspberry Pi 用カメラを利用する場合
+[USE_SORA.md](USE_SORA.md) をお読みください。
 
-これは USB カメラを利用する場合は不要なオプションです。
+## ROS ノードとして Momo を使ってみる
 
-raspi-config で Camera を Enable にしてください。
+- Momo を ROS ノードとして使ってみたい人は [USE_ROS.md](USE_ROS.md) をお読みください。
+- ARM 対応版の Momo を ROS ノードとして使ってみたい人は [USE_ARM_ROS.md](USE_ARM_ROS.md) をお読みください。
 
-さらに、以下のコマンドか
+## コマンド
 
-```
-$ sudo modprobe bcm2835-v4l2
-```
-
-/etc/modules に
-
-```
-bcm2835-v4l2
-```
-
-を追加して再起動してください。
-
-## 注意
-
-### 4K を利用する場合
-
-- 4K を利用可能なのは現時点で x86_64 のみです
-    - arm 系でも指定はできるようになっていますが、マシンリソースが足らず動作しません
-- ロジクールの BRIO 4K のみ動作確認しています
-
-### プレビュー版の機能
-
-下記はプレビュー版の機能です
-
-- 固定解像度 --fixed-resolution
-
-## 利用方法
-
-Momo はモードを 3 つ持っています。
-
-### P2P モード
-
-Momo 自体がシグナリングサーバの機能も持つモードです。
-
-### Ayame モード
-
-オープンソースのシグナリングサーバ [WebRTC Signaling Server Ayame](https://github.com/OpenAyame/ayame) を利用するモードです。
-
-### Sora モード
-
-商用 WebRTC SFU の [WebRTC SFU Sora](https://sora.shiguredo.jp/) を利用するモードです。
-
-### バージョン確認
-
-```shell
-$ ./momo --version
-WebRTC Native Client Momo version 19.07.0
-```
-
-### P2P で動作を確認する
-
-```shell
-$ ./momo --no-audio --port 8080 p2p
-```
-
-http://[momo の IP アドレス]:8080/html/p2p.html にアクセスしてください。
-
-### WebRTC Signaling Server Ayame で動作を確認する
-
-```shell
-$ ./momo --no-audio ayame wss://example.com/ws open-momo ayame-client-ud
-```
-
-### WebRTC SFU Sora で動作を確認する
-
-**この機能を利用する場合は WebRTC SFU Sora のライセンス契約が必要です**
-
-```shell
-$ ./momo --no-audio sora --auto --video-codec VP8 --video-bitrate 500 wss://example.com/signaling open-momo
-```
-
-### コマンド
+### バージョン情報
 
 ```
 $ ./momo --version
-WebRTC Native Client Momo 19.07.0
+WebRTC Native Client Momo 19.08.0
 ```
+
+### ヘルプ
 
 ```
 $ ./momo --help
@@ -126,71 +47,40 @@ Options:
   -h,--help                   Print this help message and exit
   --no-video                  ビデオを表示しない
   --no-audio                  オーディオを出さない
-  --resolution STR in [QVGA,VGA,HD,FHD,4K]
+  --resolution TEXT:{4K,FHD,HD,QVGA,VGA}
                               解像度
-  --framerate INT in [1 - 60] フレームレート
+  --framerate INT:INT in [1 - 60]
+                              フレームレート
   --fixed-resolution          固定解像度
-  --priority STR in [BALANCE,FRAMERATE,RESOLUTION]
+  --priority TEXT:{BALANCE,FRAMERATE,RESOLUTION}
                               優先設定 (Experimental)
-  --port INT in [0 - 65535]   ポート番号
+  --port INT:INT in [0 - 65535]
+                              ポート番号(デフォルト:8080)
   --daemon                    デーモン化する
   --version                   バージョン情報の表示
-  --log-level INT in [0 - 5]  ログレベル
+  --log-level INT:value in {verbose->0,info->1,warning->2,error->3,none->4} OR {0,1,2,3,4}
+                              ログレベル
 
 Subcommands:
-  p2p                         P2P
+  test                        開発向け
   ayame                       WebRTC Signaling Server Ayame
   sora                        WebRTC SFU Sora
 ```
 
-#### Raspberry Pi 向けビルドのみ追加のオプションが存在します
+### test モードヘルプ
 
-- --use-native は USB カメラ用で MJPEG をハードウェアデコードします
-- --force-i420 は Raspberry Pi 専用カメラ用で MJPEG を使えないため HD 以上の解像度でも MJPEG にせず強制的に I420 でキャプチャーします
 
 ```
-$ ./momo --help
-Momo - WebRTC ネイティブクライアント
-Usage: ./momo [OPTIONS] [SUBCOMMAND]
+$ ./momo test --help
+開発向け
+Usage: ./momo test [OPTIONS]
 
 Options:
   -h,--help                   Print this help message and exit
-  --no-video                  ビデオを表示しない
-  --no-audio                  オーディオを出さない
-  --force-i420                強制的にI420にする");
-  --use-native                MJPEGをハードウェアデコードする
-  --resolution STR in [QVGA,VGA,HD,FHD,4K]
-                              解像度
-  --framerate INT in [1 - 60] フレームレート
-  --fixed-resolution          固定解像度
-  --priority STR in [BALANCE,FRAMERATE,RESOLUTION]
-                              優先設定 (Experimental)
-  --port INT in [0 - 65535]   ポート番号
-  --daemon                    デーモン化する
-  --version                   バージョン情報の表示
-  --log-level INT in [0 - 5]  ログレベル
-
-Subcommands:
-  p2p                         P2P
-  ayame                       WebRTC Signaling Server Ayame
-  sora                        WebRTC SFU Sora
-
+  --document-root TEXT:DIR    配信ディレクトリ
 ```
 
-#### p2p
-
-
-```
-$ ./momo p2p --help
-P2P
-Usage: ./momo p2p [OPTIONS]
-
-Options:
-  -h,--help                   Print this help message and exit
-  --document-root Directory   配信ディレクトリ
-```
-
-#### ayame
+### ayame モードヘルプ
 
 
  ```
@@ -205,9 +95,10 @@ Positionals:
 Options:
   -h,--help                   Print this help message and exit
   --client-id TEXT            クライアントID
+  --signaling-key TEXT        シグナリングキー
 ```
 
-#### sora
+### sora モードヘルプ
 
 ```
 $ ./momo sora --help
@@ -219,16 +110,17 @@ Positionals:
   CHANNEL-ID TEXT REQUIRED    チャンネルID
 
 Options:
-  --video-codec STR in [VP8,VP9,H264]
-                              ビデオコーデック
-  --audio-codec STR in [OPUS,PCMU]
-                              オーディオコーデック
-  --video-bitrate INT in [1 - 30000]
-                              ビデオのビットレート
-  --audio-bitrate INT in [6 - 510]
-                              オーディオのビットレート
   -h,--help                   Print this help message and exit
   --auto                      自動接続する
+  --video-codec TEXT:{H264,VP8,VP9}
+                              ビデオコーデック
+  --audio-codec TEXT:{OPUS,PCMU}
+                              オーディオコーデック
+  --video-bitrate INT:INT in [1 - 30000]
+                              ビデオのビットレート
+  --audio-bitrate INT:INT in [6 - 510]
+                              オーディオのビットレート
+  --metadata TEXT:JSON Value  メタデータ
 ```
 
 ## うまく動作しない時
@@ -239,4 +131,4 @@ Options:
 
 ### コーデックの指定やビットレートを利用したい
 
-指定は WebRTC SFU Sora を利用したときだけ可能です。ただし受信側の SDP を動的に書き換えることで対応可能です。
+Momo 側からの指定は WebRTC SFU Sora を利用したときだけ可能です。ただし受信側で指定する指定することで対応可能です。

@@ -11,22 +11,78 @@
 
 ## develop
 
+- [ADD] CI を CircleCI から GitHub Actions へ切り替える
+    - macOS の時間制限が OSS の場合はないため Weekly build から Daily build のみにきりかえる
+- [UPDATE] libwebrtc M78 コミットポジションを 3 にする
+    - libwebrtc のハッシュは 68c715dc01cd8cd0ad2726453e7376b5f353fcd1
+    - @voluntas
+
+## 19.09.0
+
+- [ADD] --disable-echo-cancellation オプションを追加
+    - @melpon
+- [ADD] --disable-auto-gain-control オプションを追加
+    - @melpon
+- [ADD] --disable-noise-suppression オプションを追加
+    - @melpon
+- [ADD] --disable-highpass-filter オプションを追加
+    - @melpon
+- [ADD] --disable-typing-detection オプションを追加
+    - @melpon
+- [UPDATE] Boost 1.71.0 にアップデートする
+    - @voluntas
+- [UPDATE] libwebrtc M78 コミットポジションを 0 にする
+    - libwebrtc のハッシュは 5b728cca77c46ed47ae589acba676485a957070b
+    - @tnoho
+- [UPDATE] libwebrtc M77 コミットポジションを 10 にする
+    - libwebrtc のハッシュは ad73985e75684cb4ac4dadb9d3d86ad0d66612a0
+    - @voluntas
+- [FIX] Track を複数の PeerConnection で共有するよう修正
+    - @tnoho
+- [FIX] --no-audio 設定時にも capturer をチェックしていたので修正
+    - @tnoho
+- [FIX] PeerConnectionObserver の解放がなかったため修正
+    - @tnoho
+
+## 19.08.1
+
+- [ADD] Raspberry Pi 用に `--video-device` オプションを追加
+    - @melpon
+- [UPDATE] sora の metadata オプションを公開する
+    - @melpon
+
+## 19.08.0
+
+- [UPDATE] nlohmann/json を v3.7.0 にアップデートする
+    - @melpon
 - [UPDATE] Raspbian Buster に対応
     - @voluntas
+- [UPDATE] libwebrtc M77 コミットポジションを 6 にする
+    - libwebrtc のハッシュは 71e2db7296a26c6d9b18269668d74b764a320680
+    - @voluntas
+- [UPDATE] libwebrtc M77 コミットポジションを 3 にする
+    - libwebrtc のハッシュは 3d8e627cb5893714a66082544d562cbf4a561515
+    - @kdxu @voluntas
 - [UPDATE] libwebrtc M76 コミットポジションを 3 にする
     - libwebrtc のハッシュは 9863f3d246e2da7a2e1f42bbc5757f6af5ec5682
     - @voluntas
 - [UPDATE] I420 の時にもハードウェアでリサイズする
     - @tnoho
-    
 - [ADD] Raspberry Pi 向けに --use-native オプションを追加しました
     - USB カメラ用で MJPEG をハードウェアデコードします
     - @tnoho
 - [ADD] Raspberry Pi 向けに --force-i420 オプションを追加しました
-    - Raspberry Pi 専用カメラ用で MJPEG を使えないため HD 以上の解像度でも MJPEG にせず強制的に I420 でキャプチャーします
+    - Raspberry Pi 専用カメラ用で MJPEG を使えないため HD 以上の解像度でも MJPEG にせず強制的に I420 でキャプチャーする
     - @tnoho
+- [ADD] Ayame のサブコマンドに --signaling-key を追加する
+    - @kdxu @tnoho
+- [ADD] Ayame 利用時に iceServers の払い出しに対応する
+    - 独自の STUN/TURN が利用可能になる
+    - @kdxu @tnoho
 - [CHANGE] Ayame のサブコマンドで client id を optional に指定できるように修正する
     - @kdxu
+- [CHANGE] ./momo p2p を ./momo test に変更する
+    - @melpon
 - [FIX] Ayame の candidate 交換の際の JSON スキーマが間違っていたのを修正する
     - @kdxu
 - [FIX] Ayame の sdp 交換の際の type が answer 固定になっていたのを修正する
@@ -35,6 +91,16 @@
     - @kdxu
 - [FIX] Ayame で momo を起動したあとに映像を受信できない場合が発生するのバグを修正する
     - @kdxu
+- [FIX] Raspberry Pi でハードウェアエンコーダを利用した際に再接続できなくなることがある問題の修正
+    - @tnoho
+- [FIX] libwebrtc M77 で作成した armv6 バイナリがクラッシュしてしまう問題の対策
+    - @tnoho
+- [FIX] macOS 版 Momo で VideoToolbox 利用時の解像度変更時に落ちる問題の修正
+    - @hakobera
+- [FIX] macOS 版がビルドは成功するが動作させようとするとセグメンテーションフォルトする問題の修正
+    - @hakobera
+- [FIX] Raspberry Pi でハードウェアエンコーダを利用した際にGPUのメモリを食いつぶしてしまう問題の修正
+    - @tnoho
 
 ## 19.07.0
 
