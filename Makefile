@@ -406,7 +406,8 @@ ifeq ($(TARGET_OS),linux)
       ifeq ($(USE_JETSON_ENCODER),1)
         CFLAGS += \
           -DUSE_JETSON_ENCODER=1 \
-          -I$(SYSROOT)/include/libjpeg-8b
+          -I$(SYSROOT)/usr/src/jetson_multimedia_api/include \
+          -I$(SYSROOT)/usr/src/jetson_multimedia_api/include/libjpeg-8b
         LDFLAGS += \
           -lv4l2 \
           -L$(SYSROOT)/usr/lib/aarch64-linux-gnu/tegra \
@@ -423,17 +424,17 @@ ifeq ($(TARGET_OS),linux)
           -lnvos
         SOURCES += $(shell find src/hwenc_jetson -maxdepth 1 -name '*.cpp')
         JETSON_ADDITIONAL_SOURCES += \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvBuffer.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvElement.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvElementProfiler.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvJpegDecoder.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvJpegEncoder.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvLogging.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvV4l2Element.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvV4l2ElementPlane.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvVideoConverter.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvVideoEncoder.cpp \
-          $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/samples/common/classes/NvVideoDecoder.cpp
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvBuffer.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvElement.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvElementProfiler.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvJpegDecoder.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvJpegEncoder.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvLogging.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvV4l2Element.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvV4l2ElementPlane.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvVideoConverter.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvVideoEncoder.cpp \
+          $(SYSROOT)/usr/src/jetson_multimedia_api/samples/common/classes/NvVideoDecoder.cpp
       endif
     else
       # armv6, armv7 用
@@ -638,12 +639,12 @@ $(BUILD_ROOT):
 # Jetson Nano を利用する場合の追加ソースのコンパイル
 ifeq ($(USE_JETSON_ENCODER),1)
 
-$(BUILD_ROOT)/tegra_multimedia_api/%.o: $(SYSROOT)/usr/src/nvidia/tegra_multimedia_api/%.cpp | $(BUILD_ROOT)
+$(BUILD_ROOT)/jetson_multimedia_api/%.o: $(SYSROOT)/usr/src/jetson_multimedia_api/%.cpp | $(BUILD_ROOT)
 	@mkdir -p `dirname $@`
 	$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # OBJECTS にも追加する
-OBJECTS += $(addprefix $(BUILD_ROOT)/,$(subst $(SYSROOT)/usr/src/nvidia/,,$(patsubst %.cpp,%.o,$(JETSON_ADDITIONAL_SOURCES))))
+OBJECTS += $(addprefix $(BUILD_ROOT)/,$(subst $(SYSROOT)/usr/src/,,$(patsubst %.cpp,%.o,$(JETSON_ADDITIONAL_SOURCES))))
 
 endif
 
