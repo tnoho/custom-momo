@@ -9,6 +9,11 @@
 - FIX
     - バグ修正
 
+
+## Momo Custom の変更履歴ではありません
+
+世代差が確認できるよう、オリジナルの [Momo](https://github.com/shiguredo/momo) の CHANGES を残しています
+
 ## develop
 
 - [UPDATE] Momo 2020.1 にバージョンを上げる
