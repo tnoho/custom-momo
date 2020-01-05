@@ -1,21 +1,19 @@
 #include "robo_data_manager.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <pigpio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
-#include <pigpio.h>
 
 #include "rtc_base/logging.h"
 
 RoboDataManager::RoboDataManager() : _serial_fd(-1) {
-  _serial_fd = open("/dev/ttyACM0",O_RDWR);
-  if (_serial_fd < 0){
+  _serial_fd = open("/dev/ttyACM0", O_RDWR);
+  if (_serial_fd < 0) {
     RTC_LOG(LS_ERROR) << __FUNCTION__ << " open serial failed";
-  }
-  else
-  {
+  } else {
     struct termios tio;
     tio.c_cflag = B9600 | CRTSCTS | CREAD | CLOCAL | CS8;
     tio.c_iflag = IGNPAR | ICRNL;
@@ -28,33 +26,27 @@ RoboDataManager::RoboDataManager() : _serial_fd(-1) {
 }
 
 RoboDataManager::~RoboDataManager() {
-  for (RoboDataChannel *data_channel : _data_channels)
-  {
+  for (RoboDataChannel* data_channel : _data_channels) {
     delete data_channel;
   }
-  if (_serial_fd >= 0)
-  {
+  if (_serial_fd >= 0) {
     close(_serial_fd);
   }
 }
 
 void RoboDataManager::OnDataChannel(
-        rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel)
-{
+    rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) {
   _data_channels.push_back(new RoboDataChannel(this, data_channel));
 }
 
-
-void RoboDataManager::Remove(RoboDataChannel *data_channel)
-{
+void RoboDataManager::Remove(RoboDataChannel* data_channel) {
   _data_channels.erase(
       std::remove(_data_channels.begin(), _data_channels.end(), data_channel),
       _data_channels.end());
   delete data_channel;
 }
 
-void RoboDataManager::CameraEvent(const uint8_t* data)
-{
+void RoboDataManager::CameraEvent(const uint8_t* data) {
   float alpha;
   float gamma;
   memcpy(&alpha, data, sizeof(float));
@@ -62,18 +54,22 @@ void RoboDataManager::CameraEvent(const uint8_t* data)
   RTC_LOG(LS_INFO) << __FUNCTION__ << " alpha:" << alpha << " gamma:" << gamma;
   unsigned int alpha_width = (alpha * 950.0 / 90.0) + 1450.0;
   unsigned int gamma_width = (gamma * 950.0 / 90.0) + 1450.0;
-  if (alpha_width < 500) alpha_width = 500;
-  else if (alpha_width > 2400) alpha_width = 2400;
-  if (gamma_width < 500) gamma_width = 500;
-  else if (gamma_width > 2400) gamma_width = 2400;
-  RTC_LOG(LS_INFO) << __FUNCTION__ << " alpha_width:" << alpha_width << " gamma_width:" << gamma_width;
+  if (alpha_width < 500)
+    alpha_width = 500;
+  else if (alpha_width > 2400)
+    alpha_width = 2400;
+  if (gamma_width < 500)
+    gamma_width = 500;
+  else if (gamma_width > 2400)
+    gamma_width = 2400;
+  RTC_LOG(LS_INFO) << __FUNCTION__ << " alpha_width:" << alpha_width
+                   << " gamma_width:" << gamma_width;
   gpioServo(12, alpha_width);
   gpioServo(13, gamma_width);
 }
 
-void RoboDataManager::ArmEvent(const uint8_t* data)
-{
-  if(_serial_fd < 0) {
+void RoboDataManager::ArmEvent(const uint8_t* data) {
+  if (_serial_fd < 0) {
     return;
   }
   unsigned char buf[] = "00000#";

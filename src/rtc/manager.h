@@ -13,7 +13,7 @@ class RTCManager {
   RTCManager(ConnectionSettings conn_settings,
              rtc::scoped_refptr<ScalableVideoTrackSource> video_track_source,
              VideoTrackReceiver* receiver,
-						 RTCDataManager *data_mgr);
+             RTCDataManager* data_mgr);
   ~RTCManager();
   std::shared_ptr<RTCConnection> createConnection(
       webrtc::PeerConnectionInterface::RTCConfiguration rtc_config,

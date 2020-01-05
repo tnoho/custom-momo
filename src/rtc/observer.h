@@ -9,9 +9,12 @@
 
 class PeerConnectionObserver : public webrtc::PeerConnectionObserver {
  public:
-  PeerConnectionObserver(RTCMessageSender* sender, VideoTrackReceiver* receiver, RTCDataManager* data_mgr)
-      : _sender(sender), _receiver(receiver), _data_mgr(data_mgr) {};
+  PeerConnectionObserver(RTCMessageSender* sender,
+                         VideoTrackReceiver* receiver,
+                         RTCDataManager* data_mgr)
+      : _sender(sender), _receiver(receiver), _data_mgr(data_mgr){};
   ~PeerConnectionObserver();
+
  protected:
   void OnSignalingChange(
       webrtc::PeerConnectionInterface::SignalingState new_state) override {}

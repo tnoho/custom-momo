@@ -7,19 +7,18 @@
 
 class RoboDataManager;
 
-class RoboDataChannel : public webrtc::DataChannelObserver
-{
-public:
+class RoboDataChannel : public webrtc::DataChannelObserver {
+ public:
   RoboDataChannel(
-        RoboDataManager *data_manager,
-        rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel);
+      RoboDataManager* data_manager,
+      rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel);
 
   void OnStateChange() override;
   void OnMessage(const webrtc::DataBuffer& buffer) override;
   void OnBufferedAmountChange(uint64_t previous_amount) override {}
 
-private:
-  RoboDataManager *_data_manager;
+ private:
+  RoboDataManager* _data_manager;
   rtc::scoped_refptr<webrtc::DataChannelInterface> _data_channel;
 };
 

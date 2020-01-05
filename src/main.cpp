@@ -110,8 +110,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  if (gpioInitialise() < 0)
-  {
+  if (gpioInitialise() < 0) {
     std::cerr << "pigpio initialisation failed" << std::endl;
   }
   std::unique_ptr<RTCDataManager> robo_data_manager(new RoboDataManager());
@@ -122,11 +121,11 @@ int main(int argc, char* argv[]) {
         new SDLRenderer(cs.window_width, cs.window_height, cs.fullscreen));
   }
 
-  std::unique_ptr<RTCManager> rtc_manager(
-      new RTCManager(cs, std::move(capturer), sdl_renderer.get(), robo_data_manager.get()));
+  std::unique_ptr<RTCManager> rtc_manager(new RTCManager(
+      cs, std::move(capturer), sdl_renderer.get(), robo_data_manager.get()));
 #else
-  std::unique_ptr<RTCManager> rtc_manager(
-      new RTCManager(cs, std::move(capturer), nullptr, robo_data_manager.get()));
+  std::unique_ptr<RTCManager> rtc_manager(new RTCManager(
+      cs, std::move(capturer), nullptr, robo_data_manager.get()));
 #endif
 
   {
