@@ -1,42 +1,50 @@
-# WebRTC Robot Arm
+# WebRTC Native Client Momo Custom
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## WebRTC Robot Arm について
+## WebRTC Native Client Momo Custom について
 
-WebRTC Robot Arm は WebRTC Native Client Momo を DataChannel に対応させロボットの遠隔操作を可能にしたものです。
+WebRTC Native Client Momo Custom は libwebrtc を利用しブラウザなしで様々な環境で動作する WebRTC ネイティブクライアント [Momo](https://github.com/shiguredo/momo) に対して **汎用的ではない特殊な機能を追加したカスタム版です**
 
-WebRTC Robot Arm では使っていない WebRTC Native Client Momo のファイルが多くありますのでご留意ください。
+[Momo](https://github.com/shiguredo/momo) のカスタムにおける参考のために公開しています。積極的なメンテナンスは行いません。VERSIONファイルとCHANGESでオリジナルのMomoとの世代差を確認した上でご利用ください
 
-## WebRTC Native Client Momo について
+WebRTC による映像音声通信のみであればカスタム元の [Momo](https://github.com/shiguredo/momo) をご利用ください。ドキュメントを含めた公開と積極的な最新版追従を行っています。
 
-WebRTC Native Client Momo は libwebrtc を利用しブラウザなしで様々な環境で動作する WebRTC ネイティブクライアントです。
+### カスタム版について
 
-Raspberry Pi 環境では Raspberry Pi の GPU に積まれている H.264 ハードウェアエンコーダー機能を利用することが可能です。
+カスタムの差分がわかりやすいようにブランチで管理しています。現在は下記のブランチを提供しています
 
-## OpenMomo プロジェクトについて
+- base
+  - カスタムのベースとしたオリジナルの [Momo](https://github.com/shiguredo/momo) の develop スナップショットからメンテを行えないドキュメントとビルドシステムを削除したものです
 
-OpenMomo は WebRTC Native Client Momo をオープンソースとして公開し、
-継続的に開発を行うことで、ブラウザやスマートフォン以外からの WebRTC 利用を知ってもらうプロジェクトです。
+### ハードウェアエンコーダへの対応
 
-詳細については下記をご確認ください。
+- Raspberry Pi の GPU に積まれている H.264 ハードウェアエンコーダー機能を利用することが可能です
+- macOS に積まれている [VideoToolbox](https://developer.apple.com/documentation/videotoolbox) の H.264 ハードウェアエンコーダー機能を利用することが可能です
+- Jetson Nano に搭載されている H.264 ハードウェアエンコーダー機能を利用することで H.264 を 4K@30 での配信が可能です。
 
-[OpenMomo プロジェクト](https://gist.github.com/voluntas/51c67d0d8ce7af9f24655cee4d7dd253)
+## バイナリ提供について
+
+Momo Custom はバイナリでの提供は実施していません
+映像音声通信のみであればカスタム元の [Momo](https://github.com/shiguredo/momo) をご利用になれます
 
 ## 動作環境
 
 - Raspbian Buster ARMv7
+    - Raspberry Pi 4 B で動作
     - Raspberry Pi 3 B/B+ で動作
 - Raspbian Buster ARMv6
     - Raspberry Pi Zero W/WH で動作
-
-## 使ってみる
+- Ubuntu 18.04 x86_64
+- Ubuntu 18.04 ARMv8 Jetson Nano
+    - [NVIDIA Jetson Nano](https://www.nvidia.com/ja-jp/autonomous-machines/embedded-systems/jetson-nano/)
 
 Momo を使ってみたい人は [USE.md](doc/USE.md) をお読みください。
 
 ## ビルドする
 
-Linux 版 Momo のビルドに挑戦したい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md) をお読みください。
+ビルドシステムは提供していません
+映像音声通信のみであればカスタム元の [Momo](https://github.com/shiguredo/momo) でお試しください
 
 ## ライセンス
 
@@ -58,7 +66,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-## H.264 のライセンス費用について
+## Momo についての電子書籍
 
-- Raspberry Pi のハードウェアエンコーダのライセンス費用は Raspberry Pi の価格に含まれています
-    - https://www.raspberrypi.org/forums/viewtopic.php?t=200855
+Momo のコントリビュータである @tnoho が書いた Momo のノウハウが沢山詰まった本が販売されています。
+
+[WebRTCをブラウザ外で使ってブラウザでできることを増やしてみませんか?\(電子版\) \- でんでんらぼ \- BOOTH](https://tnoho.booth.pm/items/1572872)
+
+
+## サポートについて
+
+バグ報告は GitHub Issues へお願いします。
+
+### バグ報告
+
+https://github.com/tnoho/custom-momo/issues
+

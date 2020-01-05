@@ -13,15 +13,15 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #include <memory>
 
+#include "connection_settings.h"
 #include "modules/video_capture/video_capture_defines.h"
 #include "modules/video_capture/video_capture_impl.h"
+#include "rtc/scalable_track_source.h"
 #include "rtc_base/critical_section.h"
 #include "rtc_base/platform_thread.h"
-
-#include "connection_settings.h"
-#include "rtc/scalable_track_source.h"
 
 class V4L2VideoCapture : public ScalableVideoTrackSource {
  public:
@@ -32,7 +32,8 @@ class V4L2VideoCapture : public ScalableVideoTrackSource {
       size_t capture_device_index);
   V4L2VideoCapture();
   ~V4L2VideoCapture();
-  int32_t Init(const char* deviceUniqueId, const std::string& specifiedVideoDevice);
+  int32_t Init(const char* deviceUniqueId,
+               const std::string& specifiedVideoDevice);
   int32_t StartCapture(ConnectionSettings cs);
 
   bool useNativeBuffer() override;
@@ -70,4 +71,3 @@ class V4L2VideoCapture : public ScalableVideoTrackSource {
 };
 
 #endif  // V4L2_VIDEO_CAPTURE_H_
-                                                                                

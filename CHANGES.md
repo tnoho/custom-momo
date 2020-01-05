@@ -9,13 +9,161 @@
 - FIX
     - バグ修正
 
+
+## Momo Custom の変更履歴ではありません
+
+世代差が確認できるよう、オリジナルの [Momo](https://github.com/shiguredo/momo) の CHANGES を残しています
+
 ## develop
 
+- [UPDATE] Momo 2020.1 にバージョンを上げる
+    - バージョン番号を <リリース年>.<その年のリリース回数> に変更
+    - @voluntas
+- [UPDATE] Boost 1.72.0 にアップデートする
+    - @voluntas
+- [UPDATE] --video-device を Linux 全般で有効にする
+    - V4L2 capturer を使うようにした
+    - @shino
+- [UPDATE] Jetson Nano 用のライブラリを NVIDIA L4T 32.3.1 に上げる
+    - [L4T \| NVIDIA Developer](https://developer.nvidia.com/embedded/linux-tegra)
+    - @melpon
+- [UPDATE] 音声系オプションの --disable-residual-echo-detector を追加する
+    - @melpon
+- [ADD] 自由に解像度の値を指定できるようにする
+    - `--resolution 640x480` のように指定できるようになりました
+    - この機能が有効になるのは、カメラに依存するため動作保証はありません
+    - @melpon
+- [ADD] Sora 利用時のシグナリング接続情報に enviroment / libwebrtc / sora_client を追加する
+    - Jetson Nano の場合
+        - `"environment": "[aarch64] Ubuntu 18.04.3 LTS (nvidia-l4t-core 32.2.1-20190812212815)"`
+        - `"libwebrtc": "Shiguredo-Build M79@{#5} (79.5.4 b484ec00)"`
+        - `"sora_client": "WebRTC Native Client Momo 2020.1 (f6b69e77)"`
+    - macOS の場合
+        - `"environment": "[x86_64] macOS Version 10.15.2 (Build 19C57)"`
+        - `"libwebrtc": "Shiguredo-Build M79@{#5} (79.5.4 b484ec00)"`
+        - `"sora_client": "WebRTC Native Client Momo 2020.1 (f6b69e77)"`
+    - Ubuntu 18.04 x86_64 の場合
+        - `"environment": "[x86_64] Ubuntu 18.04.3 LTS"`
+        - `"libwebrtc": "Shiguredo-Build M79@{#5} (79.5.4 b484ec00)"`
+        - `"sora_client": "WebRTC Native Client Momo 2020.1 (f6b69e77)"`
+    - @melpon
+- [CHANGE] <package>.edit の機能とドキュメントを削除
+    - @melpon
+- [FIX] --no-video を指定しているにもかかわらずカメラを一瞬だけ掴むのを修正する
+    - @melpon @mganeko
+
+## 19.12.1
+
+- [UPDATE] libwebrtc を時前ビルドしないようにする
+    - https://github.com/shiguredo-webrtc-build/webrtc-build を利用する
+    - @melpon
+- [FIX] momo + ayame モードで再接続時に delay してしまう問題を解決
+    - @kdxu
+
+## 19.12.0
+
+- [UPDATE] libwebrtc M79 コミットポジションを 5 にする
+    - libwebrtc のハッシュは b484ec0082948ae086c2ba4142b4d2bf8bc4dd4b
+    - @voluntas
+- [UPDATE] json を 3.7.3 に上げる
+    - @voluntas
+- [ADD] sora モード利用時の --role に sendrecv | sendonly | recvonly を指定できるようにする
+    - @melpon
+- [FIX] QVGA の指定を 320x240 にする
+    - @melpon @Bugfire
+- [FIX] ayame モードで再接続時に segmentation fault が起こる場合があるのを修正する
+   - ただし、互いに接続を確立するまでping-pongを送らない/ping timeoutで再接続するまで数秒かかることがある」ので、再接続によって受信側が数秒待つ必要が出てくる可能性がある
+   - 上記の問題はこの修正では未解決
+   - @kdxu
+- [FIX] OpenH264 を明示的にビルドしないようにする
+    - @melpon
+
+## 19.11.1
+
+- [ADD] Raspberry Pi 4 での動作を確認
+    - @voluntas @Hexa
+- [UPDATE] libwebrtc M79 コミットポジションを 3 にする
+    - libwebrtc のハッシュは 2958d0d691526c60f755eaa364abcdbcda6adc39
+    - @voluntas
+- [UPDATE] libwebrtc M79 コミットポジションを 2 にする
+    - libwebrtc のハッシュは 8e36cc906e5e1c16486e60e62acbf79c1c691879
+    - @voluntas
+- [UPDATE] Ayame で isExistUser フラグが accept 時に返却されなかった場合 2 回 peer connection を生成する
+- [ADD] SDL を利用した音声と映像の受信可能にする `--use-sdl` を追加する
+    - [Simple DirectMedia Layer](https://www.libsdl.org/)
+    - @tnoho
+- [ADD] SDL を Sora のマルチストリームに対応する `--multistream` を追加する
+    - @tnoho
+- [ADD] SDL を Sora のスポットライトに対応する `--spotlight` を追加する
+    - @tnoho
+- [ADD] SDL 利用時に Jetson Nano では H.264 ハードウェアデコーダを利用するようにする
+    - @tnoho
+- [ADD] SDL 利用時に自分のカメラ映像を表示する `--show-me` を追加する
+    - @tnoho
+- [ADD] SDL 利用時に映像を表示するウインドウの幅を `--window-width` と `--window-height` で指定可能にする
+    - @tnoho
+- [ADD] SDL 利用時に映像を表示するウインドウをフルスクリーンにする `--fullscreen` を追加する
+    - f を押すと全画面、もう一度 f を押すと戻る
+    - @tnoho
+- [ADD] sora 利用時に `--role upstream` または `--role downstream` を指定できるようにする
+    - @melpon
+- [CHANGE] ayame の `accept` 時に返却される `isExistUser` フラグによって offer を送るかどうかを決めるよう変更する
+    - @kdxu
+- [FIX] C++14 にする
+    - @melpon
+- [FIX] USE_H264が定義されない場合でも--video-codecが使えるように修正する
+    - @msnoigrs
+
+## 19.11.0
+
+- [UPDATE] json を 3.7.1 に上げる
+    - @voluntas
+- [UPDATE] GitHub Actions の macOS ビルドを macos-latest に変更する
+    - @voluntas
+- [UPDATE] libwebrtc M78 コミットポジションを 8 にする
+    - libwebrtc のハッシュは 0b2302e5e0418b6716fbc0b3927874fd3a842caf
+    - @voluntas
+- [ADD] GitHub Actions のデイリービルドに ROS を追加する
+    - @voluntas
+- [ADD] GitHub Actions のビルドに Jetson Nano と macOS を追加する
+    - @voluntas
+- [ADD] Jetson Nano で 4K@30 出すためのドキュメントを追加
+    - @tnoho @voluntas
+- [ADD] macOS 用に --video-device オプションを追加
+    - @hakobera
+- [FIX] GitHub Actions のビルドがディスク容量不足でエラーになっていたのを修正する
+    - @hakobera
+- [FIX] ayame の client id を指定していない場合のランダム生成がうまくいっていなかったので修正する
+    - @kdxu
+- [FIX] ROS バージョンが正常にビルドできていなかったのを修正する
+    - @melpon
+
+## 19.09.2
+
+- [UPDATE] libwebrtc M78 コミットポジションを 5 にする
+    - libwebrtc のハッシュは dfa0b46737036e347acbd3b47f0f58ff6c8350c8
+    - @voluntas
+- [FIX] iceServers が json プロパティかつ array の場合のみ ice_servers_ にセットするよう修正する
+    - @kdxu
+
+## 19.09.1
+
+- [ADD] Jetson Nano のハードウェアエンコーダを利用する機能を実装
+    - @tnoho
+- [ADD] Jetson Nano のビルドを追加
+    - @melpon
 - [ADD] CI を CircleCI から GitHub Actions へ切り替える
     - macOS の時間制限が OSS の場合はないため Weekly build から Daily build のみにきりかえる
+    - @hakobera
+- [ADD] .clang-format の追加
+    - @melpon
 - [UPDATE] libwebrtc M78 コミットポジションを 3 にする
     - libwebrtc のハッシュは 68c715dc01cd8cd0ad2726453e7376b5f353fcd1
     - @voluntas
+- [UPDATE] コマンドオプションをできるだけ共通化する
+    - @melpon
+- [UPDATE] Raspberry Pi のビルド OS を Ubuntu 16.04 から 18.04 に上げる
+    - @melpon
 
 ## 19.09.0
 

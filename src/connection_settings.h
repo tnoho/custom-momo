@@ -1,14 +1,13 @@
 #ifndef CONNECTION_SETTINGS_H_
 #define CONNECTION_SETTINGS_H_
 
-#include <string>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <string>
 
 #include "api/rtp_parameters.h"
 
-struct ConnectionSettings
-{
+struct ConnectionSettings {
   std::string camera_name = "";
 #if USE_ROS
   bool image_compressed = false;
@@ -31,17 +30,26 @@ struct ConnectionSettings
   bool fixed_resolution = false;
   std::string priority = "BALANCE";
   int port = 8080;
+  bool use_sdl = false;
+  bool show_me = false;
+  int window_width = 640;
+  int window_height = 480;
+  bool fullscreen = false;
 
   std::string sora_signaling_host = "wss://example.com/signaling";
   std::string sora_channel_id;
   bool sora_auto_connect = false;
   nlohmann::json sora_metadata;
+  // upstream or downstream
+  std::string sora_role = "upstream";
+  bool sora_multistream = false;
+  int sora_spotlight = -1;
 
   std::string test_document_root;
 
   std::string ayame_signaling_host;
   std::string ayame_room_id;
-  std::string ayame_client_id;
+  std::string ayame_client_id = "";
   std::string ayame_signaling_key = "";
 
   bool disable_echo_cancellation = false;
@@ -49,31 +57,33 @@ struct ConnectionSettings
   bool disable_noise_suppression = false;
   bool disable_highpass_filter = false;
   bool disable_typing_detection = false;
+  bool disable_residual_echo_detector = false;
 
-  int getWidth() {
+  struct Size {
+    int width;
+    int height;
+  };
+  Size getSize() {
     if (resolution == "QVGA") {
-      return 480;
+      return {320, 240};
+    } else if (resolution == "VGA") {
+      return {640, 480};
     } else if (resolution == "HD") {
-      return 1280;
+      return {1280, 720};
     } else if (resolution == "FHD") {
-      return 1920;
+      return {1920, 1080};
     } else if (resolution == "4K") {
-      return 3840;
+      return {3840, 2160};
     }
-    return 640;
-  }
 
-  int getHeight() {
-    if (resolution == "QVGA") {
-      return 320;
-    } else if (resolution == "HD") {
-      return 720;
-    } else if (resolution == "FHD") {
-      return 1080;
-    } else if (resolution == "4K") {
-      return 2160;
+    // 128x96 みたいな感じのフォーマット
+    auto pos = resolution.find('x');
+    if (pos == std::string::npos) {
+      return {16, 16};
     }
-    return 480;
+    auto width = std::atoi(resolution.substr(0, pos).c_str());
+    auto height = std::atoi(resolution.substr(pos + 1).c_str());
+    return {std::max(16, width), std::max(16, height)};
   }
 
   // FRAMERATE が優先のときは RESOLUTION をデグレさせていく
@@ -86,7 +96,8 @@ struct ConnectionSettings
     return webrtc::DegradationPreference::BALANCED;
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const ConnectionSettings& cs) {
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const ConnectionSettings& cs) {
     os << "no_video: " << (cs.no_video ? "true" : "false") << "\n";
     os << "no_audio: " << (cs.no_audio ? "true" : "false") << "\n";
     os << "video_codec: " << cs.video_codec << "\n";
@@ -95,7 +106,8 @@ struct ConnectionSettings
     os << "audio_bitrate: " << cs.audio_bitrate << "\n";
     os << "resolution: " << cs.resolution << "\n";
     os << "framerate: " << cs.framerate << "\n";
-    os << "fixed_resolution: " << (cs.fixed_resolution ? "true" : "false") << "\n";
+    os << "fixed_resolution: " << (cs.fixed_resolution ? "true" : "false")
+       << "\n";
     os << "priority: " << cs.priority << "\n";
     os << "port: " << cs.port << "\n";
     os << "ayame_signaling_host: " << cs.ayame_signaling_host << "\n";
@@ -103,7 +115,8 @@ struct ConnectionSettings
     os << "ayame_client_id: " << cs.ayame_client_id << "\n";
     os << "sora_signaling_host: " << cs.sora_signaling_host << "\n";
     os << "sora_channel_id: " << cs.sora_channel_id << "\n";
-    os << "sora_auto_connect: " << (cs.sora_auto_connect ? "true" : "false") << "\n";
+    os << "sora_auto_connect: " << (cs.sora_auto_connect ? "true" : "false")
+       << "\n";
     os << "sora_metadata: " << cs.sora_metadata << "\n";
     os << "test_document_root: " << cs.test_document_root << "\n";
     return os;
