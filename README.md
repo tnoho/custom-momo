@@ -14,8 +14,15 @@ WebRTC による映像音声通信のみであればカスタム元の [Momo](ht
 
 カスタムの差分がわかりやすいようにブランチで管理しています。現在は下記のブランチを提供しています
 
-- base
+- [custom/base](https://github.com/tnoho/custom-momo) **(現在のブランチ)**
   - カスタムのベースとしたオリジナルの [Momo](https://github.com/shiguredo/momo) の develop スナップショットからメンテを行えないドキュメントとビルドシステムを削除したものです
+- [custom/robot-arm](https://github.com/tnoho/custom-momo/tree/custom/robot-arm)
+  - [WebRTCをブラウザ外で使ってブラウザでできることを増やしてみませんか?](https://tnoho.booth.pm/items/1572872) で記載したロボットアームの制御コードのブランチです
+  - WebRTC の DataChannel を経由した USBシリアル と pigpio 経由のサーボ制御に対応しています
+  - [custom/base-old](https://github.com/tnoho/custom-momo/tree/custom/base-old) と[このように比較することで](https://github.com/tnoho/custom-momo/compare/custom/base-old...custom/robot-arm)改変箇所がわかるようになっています
+  - **現在ではオリジナルの [Momo](https://github.com/shiguredo/momo) で DataChannel を経由した USBシリアル に対応しました。安定性とメンテナンスの観点から、そちらのご利用をお勧めします。**
+- [custom/base-old](https://github.com/tnoho/custom-momo/tree/custom/base-old)
+  - [custom/robot-arm](https://github.com/tnoho/custom-momo/tree/custom/robot-arm) の改造のベースとした時のオリジナルの [Momo](https://github.com/shiguredo/momo) の develop スナップショットです。比較用に残しています
 
 ### ハードウェアエンコーダへの対応
 
