@@ -79,7 +79,7 @@ ifeq ($(PACKAGE_NAME),raspbian-buster_armv6)
   USE_MMAL_ENCODER ?= 1
   USE_JETSON_ENCODER ?= 0
   USE_H264 ?= 1
-  USE_SDL2 ?= 1
+  USE_SDL2 ?= 0
   BOOST_ROOT ?= /root/boost
   JSON_ROOT ?= /root/json
   CLI11_ROOT ?= /root/CLI11
@@ -570,6 +570,7 @@ SOURCES += $(shell find src/rtc -name '*.cpp')
 SOURCES += $(shell find src/ayame -name '*.cpp')
 SOURCES += $(shell find src/sora -name '*.cpp')
 SOURCES += $(shell find src/ws -name '*.cpp')
+SOURCES += $(shell find src/serial_data_channel -maxdepth 1 -name '*.cpp')
 
 ifeq ($(USE_ROS),1)
   CFLAGS += -DHAVE_JPEG=1 -DUSE_ROS=1 -I$(SYSROOT)/opt/ros/$(ROS_VERSION)/include

@@ -23,6 +23,10 @@ WebRTC による映像音声通信のみであればカスタム元の [Momo](ht
 - macOS に積まれている [VideoToolbox](https://developer.apple.com/documentation/videotoolbox) の H.264 ハードウェアエンコーダー機能を利用することが可能です
 - Jetson Nano に搭載されている H.264 ハードウェアエンコーダー機能を利用することで H.264 を 4K@30 での配信が可能です。
 
+### データチャネル経由でのシリアルの読み書き
+
+Momo はデータチャネルを利用しシリアルに直接読み書きが可能です。信頼性より低遅延を優先したい場合の利用を想定しています。
+
 ## バイナリ提供について
 
 Momo Custom はバイナリでの提供は実施していません
@@ -51,7 +55,7 @@ Momo を使ってみたい人は [USE.md](doc/USE.md) をお読みください�
 Apache License 2.0
 
 ```
-Copyright 2018-2019, Shiguredo Inc, tnoho and melpon and kdxu
+Copyright 2018-2020, Shiguredo Inc, tnoho and melpon and kdxu
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
