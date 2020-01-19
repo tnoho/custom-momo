@@ -46,11 +46,6 @@ Momo Custom はバイナリでの提供は実施していません
     - Raspberry Pi 3 B/B+ で動作
 - Raspbian Buster ARMv6
     - Raspberry Pi Zero W/WH で動作
-- Ubuntu 18.04 x86_64
-- Ubuntu 18.04 ARMv8 Jetson Nano
-    - [NVIDIA Jetson Nano](https://www.nvidia.com/ja-jp/autonomous-machines/embedded-systems/jetson-nano/)
-
-Momo を使ってみたい人は [USE.md](doc/USE.md) をお読みください。
 
 ## ビルドする
 
